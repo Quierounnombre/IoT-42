@@ -1,0 +1,15 @@
+Face with the subject requirement of using the last
+stable release of my OS of choice(alpine) and the
+requirement of following modern standars and good
+practices from the subject for vagrant, that implies
+using trusted sources as vagrant cloud for downloading
+the images.
+
+I decided to go with the latest version on vagrant
+cloud 3.18 of alpine, and not the latest of alpine
+on the alpine page, 3.22, since that would break
+the good practices, and i am getting the latest stable
+version i am allowed to between those constrains.
+
+Leaving this as a memory, since probably i won't
+remember anything by the time the evaluation is up
