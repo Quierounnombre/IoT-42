@@ -1,0 +1,205 @@
+# =========================
+# ConfigMaps for pages
+# =========================
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: page1
+data:
+  index.html: "<h1>Page 1</h1>"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: page2
+data:
+  index.html: "<h1>Page 2</h1>"
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: page3
+data:
+  index.html: "<h1>Page 3</h1>"
+
+---
+
+# =========================
+# Deployments
+# =========================
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-one
+spec:
+  selector:
+    matchLabels:
+      app: app-one
+  template:
+    metadata:
+      labels:
+        app: app-one
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+      volumes:
+      - name: html
+        configMap:
+          name: page1
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-two
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app-two
+  template:
+    metadata:
+      labels:
+        app: app-two
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+      volumes:
+      - name: html
+        configMap:
+          name: page2
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-three
+spec:
+  selector:
+    matchLabels:
+      app: app-three
+  template:
+    metadata:
+      labels:
+        app: app-three
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        volumeMounts:
+        - name: html
+          mountPath: /usr/share/nginx/html/index.html
+          subPath: index.html
+      volumes:
+      - name: html
+        configMap:
+          name: page3
+
+# =========================
+# Services
+# =========================
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-one
+spec:
+  selector:
+    app: app-one
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-two
+spec:
+  selector:
+    app: app-two
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-three
+spec:
+  selector:
+    app: app-three
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+# =========================
+# Ingress
+# =========================
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: app-one.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-one
+            port:
+              number: 80
+  - host: app-two.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-two 
+            port:
+              number: 80
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-three
+            port:
+              number: 80
+

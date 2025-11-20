@@ -1,0 +1,49 @@
+Vagrant.configure("2") do |config|
+
+  config.vm.define "vicgarciS" do |s|
+    s.vm.box = "generic/alpine318"
+    s.vm.hostname = "vicgarciS"
+    s.vm.network "private_network", ip: "192.168.56.110"
+
+    s.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 1
+    end                                
+
+	s.vm.synced_folder ".", "/vagrant"
+
+	s.vm.provision "shell", inline: 
+	<<-SHELL
+	curl -sfL https://get.k3s.io | sh -s - --node-ip=192.168.56.110
+	for i in $(seq 1 30); do
+		if [ -f /var/lib/rancher/k3s/server/node-token ]; then
+    		break
+		fi
+		sleep 2
+	done
+	until sudo k3s kubectl get nodes --no-headers | grep -q 'Ready'; do
+    	echo "Waiting for k3s server to be ready..."
+		sleep 2
+	done
+	echo "Waiting for k3s node to be Ready..."
+
+	while true; do
+   		STATUS=$(kubectl get node "$(hostname)" -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
+	    if [ "$STATUS" == "True" ]; then
+			echo "✅ Node is Ready!"
+        	break
+    	else
+        	echo "⏳ Node not ready yet. Current status: $STATUS"
+        	sleep 2
+		fi
+	done
+
+	echo 'sudo kubectl get all -o wide' > /home/vagrant/ssh-login.sh
+	chmod +x /home/vagrant/ssh-login.sh
+	echo '/home/vagrant/ssh-login.sh' >> /home/vagrant/.bash_profile
+
+	kubectl	apply -f /vagrant/deploy.yaml
+	SHELL
+  end
+
+end
