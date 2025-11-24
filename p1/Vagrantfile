@@ -40,6 +40,10 @@ Vagrant.configure("2") do |config|
 
 	echo "---SERVER TOKEN---"
 	cp /var/lib/rancher/k3s/server/node-token /vagrant/node-token
+
+	echo 'sudo kubectl get nodes -o wide' > /home/vagrant/ssh-login.sh
+	chmod +x /home/vagrant/ssh-login.sh
+	echo '/home/vagrant/ssh-login.sh' >> /home/vagrant/.bash_profile
 	SHELL
   end
 
