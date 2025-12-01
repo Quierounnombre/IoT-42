@@ -1,17 +1,8 @@
+#--------------------------------------------------------IMAGE
 apiVersion: v1
 kind: Namespace
 metadata:
   name: dev
-
----
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: page1
-  namespace: dev
-data:
-  index.html: "<h1>Page 1</h1>"
 
 ---
 
@@ -26,8 +17,8 @@ spec:
     app: app
   ports:
   - protocol: TCP
-    port: 80
-    targetPort: 80
+    port: 8888
+    targetPort: 8888
     nodePort: 30100
 
 ---
@@ -47,13 +38,10 @@ spec:
         app: app
     spec:
       containers:
-      - name: nginx
-        image: nginx:alpine
-        volumeMounts:
-        - name: html
-          mountPath: /usr/share/nginx/html/index.html
-          subPath: index.html
-      volumes:
-      - name: html
-        configMap:
-          name: page1
+        - name: app
+          image: wil42/playground:v1
+          ports:
+            - containerPort: 8888
+
+---
+#--------------------------------------------------------ARGO CD
