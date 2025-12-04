@@ -22,4 +22,4 @@ argocd app create app \
   --revision master \
   --sync-policy automated \
   --auto-prune \
-
+  --upsert \
