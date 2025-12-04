@@ -40,6 +40,6 @@ spec:
     spec:
       containers:
         - name: will-app
-          image: wil42/playground:v2
+          image: wil42/playground:v1
           ports:
             - containerPort: 80
