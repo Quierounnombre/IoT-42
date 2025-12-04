@@ -23,3 +23,4 @@ argocd app create app \
   --sync-policy automated \
   --auto-prune \
   --upsert \
+  --self-heal \
