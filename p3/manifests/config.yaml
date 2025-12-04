@@ -9,12 +9,12 @@ metadata:
 apiVersion: v1
 kind: Service
 metadata:
-  name: dev-net
+  name: will-app
   namespace: dev
 spec:
   type: ClusterIP
   selector:
-    app: app
+    app: will-app
   ports:
   - protocol: TCP
     port: 80
@@ -25,19 +25,21 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app
+  name: will-app
   namespace: dev
+  labels:
+    app: will-app
 spec:
   selector:
     matchLabels:
-      app: app
+      app: will-app
   template:
     metadata:
       labels:
-        app: app
+        app: will-app
     spec:
       containers:
-        - name: app
+        - name: will-app
           image: wil42/playground:v1
           ports:
             - containerPort: 80
