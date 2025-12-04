@@ -20,5 +20,6 @@ argocd app create app \
   --dest-server https://kubernetes.default.svc \
   --dest-namespace dev \
   --revision master \
-  --sync-policy automated
+  --sync-policy automated \
+  --auto-prune \
 
