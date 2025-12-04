@@ -12,13 +12,14 @@ metadata:
   name: will-app
   namespace: dev
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: will-app
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 8888
+    targetPort: 80
+    nodePort: 8888
 
 ---
 

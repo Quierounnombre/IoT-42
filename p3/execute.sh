@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 
 kubectl port-forward svc/argocd-server -n argocd 8080:443 &
-kubectl port-forward svc/will-app -n dev 8888:80 &
 
 echo "PASSWORD---------------------------------"
 ARGOCD_PSWD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
